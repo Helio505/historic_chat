@@ -52,3 +52,24 @@ python main.py
 2. Para enviar uma imagem, basta inserir 'imagem' no chat e enviar. Isso abrirá um local para
    colocar o caminho da imagem e o prompt que irá junto (inserir 'imagem' sozinha).
 3. Para sair do chat, basta inserir 'sair','exit' ou 'quit'.
+
+## Personalidades
+
+obs. No momento, são escolhidas aleatoriamente.
+
+- Sócrates
+- Albert Einstein
+- Getúlio Vargas
+- Isaac Newton
+- Cristóvão Colombo
+- Leonardo da Vinci
+- Charles Darwin
+- Galileu Galilei
+- Karl Marx
+- Nikola Tesla
+- Thomas Edison
+- Nicolo Machiavelli
+- Vasco da Gama
+- Napoleão Bonaparte
+- Pelé
+- Neil Armstrong

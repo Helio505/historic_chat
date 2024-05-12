@@ -9,38 +9,34 @@ import PIL.Image
 import random
 from system_instructions import instructions
 
-init(autoreset=True)
-load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-
-def get_random_instruction():
-    return random.choice(instructions)
-
-
-personalidade = get_random_instruction()
-
-
-generation_config = {
-    "temperature": 1,
-    "top_p": 1,
-    'top_k': 1,
-}
-
-model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-pro-latest",
-    generation_config=generation_config,
-    system_instruction=personalidade.get("instrucoes")
-)
-
-
-class SocratesChat:
+class HistoricChat:
     def __init__(self):
+        # Inicializações
+        init(autoreset=True)
+        load_dotenv()
+
+        # Configurações
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+        generation_config = {
+            "temperature": 1,
+            "top_p": 1,
+            'top_k': 1,
+        }
+
+        self.personalidade = self.__get_random_instruction()
+        model = genai.GenerativeModel(
+            model_name="models/gemini-1.5-pro-latest",
+            generation_config=generation_config,
+            system_instruction=self.personalidade.get("instrucoes")
+        )
         self.model = model
         self.chat = self.model.start_chat(history=[])
 
-    def get_response(self, message, image_path=None):
+    def __get_random_instruction(self):
+        return random.choice(instructions)
+
+    def __get_response(self, message, image_path=None):
         if image_path:
             image = PIL.Image.open(image_path)
             response = self.chat.send_message(
@@ -55,7 +51,8 @@ class SocratesChat:
         return response
 
     def start_chat(self):
-        nome_personalidade = personalidade.get("nome")
+        nome_personalidade = self.personalidade.get("nome")
+        mensagem_saida = self.personalidade.get("mensagem_saida")
         print(Fore.GREEN + f"Você está agora conversando com {nome_personalidade.capitalize(
         )}. Digite 'sair' para terminar a conversa." + Style.RESET_ALL)
         while True:
@@ -85,7 +82,7 @@ class SocratesChat:
                 print()
 
                 # Inserir mensagem e imagem no modelo
-                response = self.get_response(user_message, image_path)
+                response = self.__get_response(user_message, image_path)
                 # Print resposta do modelo
                 print(f"{Fore.GREEN}{nome_personalidade.capitalize()}: {
                       Fore.RED}", end="")
@@ -100,7 +97,7 @@ class SocratesChat:
                 continue
 
             # Resposta do modelo
-            response = self.get_response(user_message)
+            response = self.__get_response(user_message)
 
             # Print resposta do modelo
             print(f"{Fore.GREEN}{nome_personalidade.capitalize()}: {
@@ -118,11 +115,11 @@ class SocratesChat:
         print(Fore.GREEN + nome_personalidade.capitalize() +
               ": " + Fore.RED, end="")
         print(Fore.RED, end="")
-        print("Até a próxima, adeus!")
+        print(mensagem_saida)
         print(Style.RESET_ALL)
         exit(0)
 
 
 if __name__ == "__main__":
-    chat = SocratesChat()
+    chat = HistoricChat()
     chat.start_chat()

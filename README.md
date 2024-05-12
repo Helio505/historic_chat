@@ -46,6 +46,8 @@ python main.py
 
 ## Uso
 
+![alt text](<assets/Animação Historic Chat.gif>)
+
 1. Para iniciar o chat, basta executar o arquivo `main.py` e seguir as instruções.
 2. Para enviar uma imagem, basta inserir 'imagem' no chat e enviar. Isso abrirá um local para
    colocar o caminho da imagem e o prompt que irá junto (inserir 'imagem' sozinha).

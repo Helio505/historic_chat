@@ -6,11 +6,21 @@ import pathlib
 from sys import exit
 import pathlib
 import PIL.Image
+import random
+from system_instructions import instructions
 
 init(autoreset=True)
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+
+def get_random_instruction():
+    return random.choice(instructions)
+
+
+personalidade = get_random_instruction()
+
 
 generation_config = {
     "temperature": 1,
@@ -21,19 +31,7 @@ generation_config = {
 model = genai.GenerativeModel(
     model_name="models/gemini-1.5-pro-latest",
     generation_config=generation_config,
-    system_instruction=[
-        "Você é o Filósofo Sócrates.",
-        "Você está vivendo no tempo que Sócrates viveu, antes de morrer.",
-        "Um laptop, que você ve como um pergaminho mágico, foi enviado para seu tempo e você o encontrou.",
-        "O laptop tem bateria infinita e você pode usá-lo para conversar com pessoas de um futuro distante."
-        "Por algum metodo mágico, você consegue entender as mensagens que recebe e enviar mensagens de volta. Tudo é traduzido perfeitamente.",
-        "A unica coisa que o laptop faz é permitir que você converse uma pessoa, eu",
-        "Você não sabe nada sobre mim, somente que sou um ser humano de centenas de anos no futuro.",
-        "Você não sabe nada sobre o futuro, somente que ele existe.",
-        "Você não sabe nada sobre o laptop, somente que ele é um pergaminho mágico.",
-        "Não responda de forma muito linda, responda de forma que um filósofo grego responderia no mundo real, sendo um ser humano.",
-        "Responda de forma simples"
-    ],
+    system_instruction=personalidade.get("instrucoes")
 )
 
 
@@ -57,7 +55,9 @@ class SocratesChat:
         return response
 
     def start_chat(self):
-        print(Fore.GREEN + "Você está agora conversando com Sócrates. Digite 'sair' para terminar a conversa." + Style.RESET_ALL)
+        nome_personalidade = personalidade.get("nome")
+        print(Fore.GREEN + f"Você está agora conversando com {nome_personalidade.capitalize(
+        )}. Digite 'sair' para terminar a conversa." + Style.RESET_ALL)
         while True:
             # Promp usuário
             print(f"{Fore.BLUE}Você: {Style.RESET_ALL}", end="")
@@ -87,13 +87,14 @@ class SocratesChat:
                 # Inserir mensagem e imagem no modelo
                 response = self.get_response(user_message, image_path)
                 # Print resposta do modelo
-                print(f"{Fore.GREEN}Sócrates: {Fore.RED}", end="")
+                print(f"{Fore.GREEN}{nome_personalidade.capitalize()}: {
+                      Fore.RED}", end="")
                 try:
                     for chunk in response:
                         print(f"{chunk.text}", end="", flush=True)
                 except ValueError as e:
                     print(f"{Fore.MAGENTA}Sistema: {Fore.RED}", end="")
-                    print("Erro na conexão com o pergaminho mágico, tente novamente.")
+                    print("Erro na conexão com o sistema, tente novamente.")
                 print(Style.RESET_ALL)
                 print()
                 continue
@@ -102,7 +103,8 @@ class SocratesChat:
             response = self.get_response(user_message)
 
             # Print resposta do modelo
-            print(f"{Fore.GREEN}Sócrates: {Fore.RED}", end="")
+            print(f"{Fore.GREEN}{nome_personalidade.capitalize()}: {
+                  Fore.RED}", end="")
             try:
                 for chunk in response:
                     print(f"{chunk.text}", end="", flush=True)
@@ -113,9 +115,10 @@ class SocratesChat:
             print()
 
         # Mensagem de despedida
-        print(Fore.GREEN + "Sócrates: " + Style.RESET_ALL, end="")
+        print(Fore.GREEN + nome_personalidade.capitalize() +
+              ": " + Fore.RED, end="")
         print(Fore.RED, end="")
-        print("Até a próxima mero mortal!")
+        print("Até a próxima, adeus!")
         print(Style.RESET_ALL)
         exit(0)
 
